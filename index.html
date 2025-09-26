@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Patient Admission & Prescription Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Basic reset and typography */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background: #f2f2f2; }
+    h1, h2, h3 { margin-bottom: 10px; }
+    .container { max-width: 800px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; }
+    input[type=text], input[type=number], input[type=password], select, textarea { width: 100%; padding: 8px; margin-bottom: 5px; border: 1px solid #ccc; border-radius: 3px; }
+    select[multiple] { height: auto; }
+    textarea { height: 80px; resize: vertical; }
+    button { padding: 10px 15px; margin: 5px 0; background: #007BFF; color: #fff; border: none; border-radius: 3px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .button-secondary { background: #6c757d; }
+    .button-danger { background: #dc3545; }
+    .button-danger:hover { background: #c82333; }
+    .nav { margin-bottom: 20px; }
+    .nav a { margin-right: 15px; color: #007BFF; text-decoration: none; font-weight: bold; }
+    .nav a:hover { text-decoration: underline; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ccc; }
+    .message { margin: 10px 0; padding: 10px; border-radius: 3px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+    /* Print styles */
+    @media print {
+      body * { visibility: hidden; }
+      #prescriptionSection, #prescriptionSection * { visibility: visible; }
+      #prescriptionSection { position: absolute; left: 0; top: 0; width: 100%; }
+      .nav, .no-print, button { display: none; }
+    }
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container { padding: 10px; }
+      .nav a { display: block; margin: 5px 0; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Page -->
+  <div id="loginSection" class="container">
+    <h2>Doctor Login</h2>
+    <div class="form-group">
+      <label>Username:</label>
+      <input type="text" id="loginUsername">
+    </div>
+    <div class="form-group">
+      <label>Password:</label>
+      <input type="password" id="loginPassword">
+    </div>
+    <button onclick="login()">Login</button>
+    <div id="loginMessage"></div>
+  </div>
+
+  <!-- Dashboard (Landing) -->
+  <div id="dashboardSection" class="container" style="display:none;">
+    <div class="nav no-print">
+      <a href="#" onclick="showSection('admitPatientSection')">Admit Patient</a>
+      <a href="#" onclick="showSection('manageDrugsSection')">Manage Drugs</a>
+      <a href="#" onclick="showSection('manageProtocolsSection')">Manage Protocols</a>
+      <a href="#" onclick="showSection('managePatientsSection')">Manage Patients</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+    <h2>Welcome to the Patient Admission & Prescription System</h2>
+    <p>Select a function from the menu above.</p>
+  </div>
+
+  <!-- Manage Drugs Page -->
+  <div id="manageDrugsSection" class="container" style="display:none;">
+    <div class="nav no-print">
+      <a href="#" onclick="showSection('dashboardSection')">Dashboard</a>
+      <a href="#" onclick="showSection('manageDrugsSection')">Manage Drugs</a>
+      <a href="#" onclick="showSection('manageProtocolsSection')">Manage Protocols</a>
+      <a href="#" onclick="showSection('admitPatientSection')">Admit Patient</a>
+      <a href="#" onclick="showSection('managePatientsSection')">Manage Patients</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+    <h2>Manage Drugs</h2>
+    <div id="drugsMessage"></div>
+    <div class="form-group">
+      <label>Drug Name:</label>
+      <input type="text" id="drugName">
+    </div>
+    <div class="form-group">
+      <label>Form:</label>
+      <select id="drugForm">
+        <option value="Tab">Tab</option>
+        <option value="Cap">Cap</option>
+        <option value="Syrup">Syrup</option>
+        <option value="Injection">Injection</option>
+        <option value="Infusion">Infusion</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Dosage:</label>
+      <input type="text" id="drugDosage">
+    </div>
+    <button onclick="addDrug()">Add Drug</button>
+    <h3>Existing Drugs</h3>
+    <table id="drugsTable">
+      <tr><th>Name</th><th>Form</th><th>Dosage</th><th>Action</th></tr>
+    </table>
+  </div>
+
+  <!-- Manage Protocols Page -->
+  <div id="manageProtocolsSection" class="container" style="display:none;">
+    <div class="nav no-print">
+      <a href="#" onclick="showSection('dashboardSection')">Dashboard</a>
+      <a href="#" onclick="showSection('manageDrugsSection')">Manage Drugs</a>
+      <a href="#" onclick="showSection('manageProtocolsSection')">Manage Protocols</a>
+      <a href="#" onclick="showSection('admitPatientSection')">Admit Patient</a>
+      <a href="#" onclick="showSection('managePatientsSection')">Manage Patients</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+    <h2>Manage Protocols (Diagnosis → Drug Templates)</h2>
+    <div id="protocolsMessage"></div>
+    <div class="form-group">
+      <label>Diagnosis Name:</label>
+      <input type="text" id="protocolName">
+    </div>
+    <div class="form-group">
+      <label>Select Drugs:</label>
+      <select id="protocolDrugs" multiple></select>
+    </div>
+    <button id="protocolAddBtn" onclick="addProtocol()">Add Protocol</button>
+    <h3>Existing Protocols</h3>
+    <table id="protocolsTable">
+      <tr><th>Diagnosis</th><th>Drugs</th><th>Action</th></tr>
+    </table>
+  </div>
+
+  <!-- Admit Patient Page -->
+  <div id="admitPatientSection" class="container" style="display:none;">
+    <div class="nav no-print">
+      <a href="#" onclick="showSection('dashboardSection')">Dashboard</a>
+      <a href="#" onclick="showSection('manageDrugsSection')">Manage Drugs</a>
+      <a href="#" onclick="showSection('manageProtocolsSection')">Manage Protocols</a>
+      <a href="#" onclick="showSection('admitPatientSection')">Admit Patient</a>
+      <a href="#" onclick="showSection('managePatientsSection')">Manage Patients</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+    <h2>Admit Patient</h2>
+    <div id="patientMessage"></div>
+    <div class="form-group">
+      <label>Admission No:</label>
+      <input type="text" id="patientAdmissionNo">
+    </div>
+    <div class="form-group">
+      <label>Name:</label>
+      <input type="text" id="patientName">
+    </div>
+    <div class="form-group">
+      <label>Age:</label>
+      <input type="number" id="patientAge" min="0">
+    </div>
+    <div class="form-group">
+      <label>Gender:</label>
+      <select id="patientGender" onchange="toggleLMP()">
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </div>
+    <div class="form-group" id="lmpGroup" style="display:none;">
+      <label>Last Menstrual Period (LMP):</label>
+      <input type="date" id="patientLMP">
+    </div>
+    <div class="form-group">
+      <label>Ward No:</label>
+      <input type="text" id="patientWard">
+    </div>
+    <div class="form-group">
+      <label>Bed No:</label>
+      <input type="text" id="patientBed">
+    </div>
+    <div class="form-group">
+      <label>Chief Complaints:</label>
+      <textarea id="patientComplaints"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Probable Diagnosis:</label>
+      <input type="text" id="patientDiagnosis" oninput="autoSelectDrugs()">
+    </div>
+    <div class="form-group">
+      <label>Past Illnesses (choose multiple):</label>
+      <select id="patientPastIllnesses" multiple>
+        <option value="BA">BA</option>
+        <option value="DM">DM</option>
+        <option value="HTN">HTN</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Drugs (Multiple Select):</label>
+      <select id="patientDrugs" multiple></select>
+    </div>
+    <button onclick="savePatient()">Save Patient & Generate Prescription</button>
+  </div>
+
+  <!-- Manage Patients Page -->
+  <div id="managePatientsSection" class="container" style="display:none;">
+    <div class="nav no-print">
+      <a href="#" onclick="showSection('dashboardSection')">Dashboard</a>
+      <a href="#" onclick="showSection('manageDrugsSection')">Manage Drugs</a>
+      <a href="#" onclick="showSection('manageProtocolsSection')">Manage Protocols</a>
+      <a href="#" onclick="showSection('admitPatientSection')">Admit Patient</a>
+      <a href="#" onclick="showSection('managePatientsSection')">Manage Patients</a>
+      <a href="#" onclick="logout()">Logout</a>
+    </div>
+    <h2>Manage Patients</h2>
+    <h3>Admitted Patients</h3>
+    <table id="patientsTable">
+      <tr><th>Admission No</th><th>Name</th><th>Age</th><th>Gender</th><th>Ward</th><th>Bed</th><th>Actions</th></tr>
+    </table>
+  </div>
+
+  <!-- Prescription Page -->
+  <div id="prescriptionSection" class="container" style="display:none;">
+    <h2>Prescription</h2>
+    <div id="prescriptionContent">
+      <h3 id="clinicName">Clinic/Hospital Name</h3>
+      <p id="doctorName">Doctor: Dr. [Name]</p>
+      <hr>
+      <p><strong>Admission No:</strong> <span id="presAdmissionNo"></span></p>
+      <p><strong>Name:</strong> <span id="presName"></span></p>
+      <p><strong>Age:</strong> <span id="presAge"></span></p>
+      <p><strong>Gender:</strong> <span id="presGender"></span></p>
+      <p id="presLMPContainer" style="display:none;"><strong>LMP:</strong> <span id="presLMP"></span></p>
+      <p><strong>Ward No:</strong> <span id="presWard"></span></p>
+      <p><strong>Bed No:</strong> <span id="presBed"></span></p>
+      <p><strong>Chief Complaints:</strong> <span id="presComplaints"></span></p>
+      <p><strong>Probable Diagnosis:</strong> <span id="presDiagnosis"></span></p>
+      <p><strong>Past Illnesses:</strong> <span id="presPastIllnesses"></span></p>
+      <h3>Drugs Prescribed:</h3>
+      <ul id="presDrugsList"></ul>
+      <br>
+      <p class="no-print"><button onclick="window.print()">Print</button></p>
+      <br><br>
+      <p><strong>Doctor's Signature:</strong></p>
+      <p>______________________________</p>
+    </div>
+  </div>
+
+  <script>
+    // Store data in localStorage with JSON arrays
+    function getDrugs() {
+      return JSON.parse(localStorage.getItem('drugs') || '[]');
+    }
+    function saveDrugs(drugs) {
+      localStorage.setItem('drugs', JSON.stringify(drugs));
+    }
+    function getProtocols() {
+      return JSON.parse(localStorage.getItem('protocols') || '[]');
+    }
+    function saveProtocols(protocols) {
+      localStorage.setItem('protocols', JSON.stringify(protocols));
+    }
+    function getPatients() {
+      return JSON.parse(localStorage.getItem('patients') || '[]');
+    }
+    function savePatients(patients) {
+      localStorage.setItem('patients', JSON.stringify(patients));
+    }
+
+    // Section navigation
+    function showSection(id) {
+      const sections = ['loginSection','dashboardSection','manageDrugsSection','manageProtocolsSection','admitPatientSection','managePatientsSection','prescriptionSection'];
+      sections.forEach(sec => {
+        document.getElementById(sec).style.display = (sec === id) ? 'block' : 'none';
+      });
+      // Clear messages
+      ['loginMessage','drugsMessage','protocolsMessage','patientMessage'].forEach(msgId => {
+        const elem = document.getElementById(msgId);
+        if (elem) elem.innerHTML = '';
+      });
+      // Refresh content when showing
+      if (id === 'manageDrugsSection') refreshDrugsTable();
+      if (id === 'manageProtocolsSection') {
+        populateProtocolDrugs();
+        refreshProtocolsTable();
+      }
+      if (id === 'admitPatientSection') populatePatientDrugs();
+      if (id === 'managePatientsSection') refreshPatientsTable();
+    }
+
+    // Login/Logout
+    function login() {
+      const user = document.getElementById('loginUsername').value;
+      const pass = document.getElementById('loginPassword').value;
+      if (user === 'admin' && pass === 'admin') {
+        localStorage.setItem('loggedIn', 'true');
+        showSection('dashboardSection');
+      } else {
+        document.getElementById('loginMessage').innerHTML = '<div class="message error">Invalid credentials.</div>';
+      }
+    }
+    function logout() {
+      localStorage.removeItem('loggedIn');
+      showSection('loginSection');
+    }
+    function checkLogin() {
+      if (localStorage.getItem('loggedIn') === 'true') {
+        showSection('dashboardSection');
+      } else {
+        showSection('loginSection');
+      }
+    }
+    window.onload = checkLogin;
+
+    // Manage Drugs functions
+    function addDrug() {
+      const name = document.getElementById('drugName').value.trim();
+      const form = document.getElementById('drugForm').value;
+      const dosage = document.getElementById('drugDosage').value.trim();
+      if (!name || !dosage) {
+        document.getElementById('drugsMessage').innerHTML = '<div class="message error">Please enter drug name and dosage.</div>';
+        return;
+      }
+      let drugs = getDrugs();
+      drugs.push({name: name, form: form, dosage: dosage});
+      saveDrugs(drugs);
+      document.getElementById('drugsMessage').innerHTML = '<div class="message success">Drug added successfully.</div>';
+      document.getElementById('drugName').value = '';
+      document.getElementById('drugDosage').value = '';
+      refreshDrugsTable();
+    }
+    function refreshDrugsTable() {
+      const drugs = getDrugs();
+      const table = document.getElementById('drugsTable');
+      table.innerHTML = '<tr><th>Name</th><th>Form</th><th>Dosage</th><th>Action</th></tr>';
+      drugs.forEach((d, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).innerText = d.name;
+        row.insertCell(1).innerText = d.form;
+        row.insertCell(2).innerText = d.dosage;
+        const actionCell = row.insertCell(3);
+        const delBtn = document.createElement('button');
+        delBtn.innerText = 'Delete';
+        delBtn.className = 'button-danger';
+        delBtn.onclick = function() {
+          if (confirm('Are you sure you want to delete this drug?')) {
+            deleteDrug(index);
+          }
+        };
+        actionCell.appendChild(delBtn);
+      });
+    }
+    function deleteDrug(index) {
+      let drugs = getDrugs();
+      drugs.splice(index, 1);
+      saveDrugs(drugs);
+      document.getElementById('drugsMessage').innerHTML = '<div class="message success">Drug deleted.</div>';
+      refreshDrugsTable();
+    }
+
+    // Manage Protocols functions
+    let editingProtocolIndex = -1;
+    function populateProtocolDrugs() {
+      const drugs = getDrugs();
+      const select = document.getElementById('protocolDrugs');
+      select.innerHTML = '';
+      drugs.forEach((d, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.text = d.name + ' ' + d.form + ' ' + d.dosage;
+        select.add(option);
+      });
+    }
+    function addProtocol() {
+      const diagnosis = document.getElementById('protocolName').value.trim();
+      const select = document.getElementById('protocolDrugs');
+      const selectedOptions = Array.from(select.selectedOptions).map(opt => parseInt(opt.value));
+      if (!diagnosis || selectedOptions.length === 0) {
+        document.getElementById('protocolsMessage').innerHTML = '<div class="message error">Enter diagnosis and select at least one drug.</div>';
+        return;
+      }
+      let protocols = getProtocols();
+      if (editingProtocolIndex >= 0) {
+        // Update existing protocol
+        protocols[editingProtocolIndex] = {diagnosis: diagnosis, drugs: selectedOptions};
+        editingProtocolIndex = -1;
+        document.getElementById('protocolsMessage').innerHTML = '<div class="message success">Protocol updated.</div>';
+        document.getElementById('protocolAddBtn').innerText = 'Add Protocol';
+      } else {
+        // Add new protocol
+        protocols.push({diagnosis: diagnosis, drugs: selectedOptions});
+        document.getElementById('protocolsMessage').innerHTML = '<div class="message success">Protocol added.</div>';
+      }
+      saveProtocols(protocols);
+      document.getElementById('protocolName').value = '';
+      select.selectedIndex = -1;
+      refreshProtocolsTable();
+    }
+    function refreshProtocolsTable() {
+      const protocols = getProtocols();
+      const table = document.getElementById('protocolsTable');
+      table.innerHTML = '<tr><th>Diagnosis</th><th>Drugs</th><th>Action</th></tr>';
+      const drugs = getDrugs();
+      protocols.forEach((p, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).innerText = p.diagnosis;
+        const drugNames = p.drugs.map(i => drugs[i] ? drugs[i].name + ' ' + drugs[i].form + ' ' + drugs[i].dosage : '').filter(Boolean);
+        row.insertCell(1).innerText = drugNames.join(', ');
+        const actionCell = row.insertCell(2);
+        const delBtn = document.createElement('button');
+        delBtn.innerText = 'Delete';
+        delBtn.className = 'button-danger';
+        delBtn.onclick = function() {
+          if (confirm('Delete this protocol?')) {
+            deleteProtocol(index);
+          }
+        };
+        actionCell.appendChild(delBtn);
+        const editBtn = document.createElement('button');
+        editBtn.innerText = 'Edit';
+        editBtn.onclick = function() { editProtocol(index); };
+        actionCell.appendChild(editBtn);
+      });
+    }
+    function deleteProtocol(index) {
+      let protocols = getProtocols();
+      protocols.splice(index, 1);
+      saveProtocols(protocols);
+      document.getElementById('protocolsMessage').innerHTML = '<div class="message success">Protocol deleted.</div>';
+      refreshProtocolsTable();
+    }
+    function editProtocol(index) {
+      const protocols = getProtocols();
+      const p = protocols[index];
+      document.getElementById('protocolName').value = p.diagnosis;
+      const select = document.getElementById('protocolDrugs');
+      for (let i = 0; i < select.options.length; i++) {
+        select.options[i].selected = p.drugs.includes(i);
+      }
+      editingProtocolIndex = index;
+      document.getElementById('protocolAddBtn').innerText = 'Save Protocol';
+    }
+
+    // Admit Patient functions
+    function toggleLMP() {
+      const gender = document.getElementById('patientGender').value;
+      document.getElementById('lmpGroup').style.display = (gender === 'Female') ? 'block' : 'none';
+    }
+    function populatePatientDrugs() {
+      const select = document.getElementById('patientDrugs');
+      const drugs = getDrugs();
+      select.innerHTML = '';
+      drugs.forEach((d, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.text = d.name + ' ' + d.form + ' ' + d.dosage;
+        select.add(opt);
+      });
+    }
+    function autoSelectDrugs() {
+      const diag = document.getElementById('patientDiagnosis').value.trim();
+      const protocols = getProtocols();
+      const select = document.getElementById('patientDrugs');
+      if (!select) return;
+      // Deselect all first
+      for (let i = 0; i < select.options.length; i++) {
+        select.options[i].selected = false;
+      }
+      // Preselect drugs from matching protocol(s)
+      protocols.forEach(p => {
+        if (p.diagnosis.toLowerCase() === diag.toLowerCase()) {
+          p.drugs.forEach(idx => {
+            if (select.options[idx]) select.options[idx].selected = true;
+          });
+        }
+      });
+    }
+    function savePatient() {
+      const admissionNo = document.getElementById('patientAdmissionNo').value.trim();
+      const name = document.getElementById('patientName').value.trim();
+      const age = document.getElementById('patientAge').value;
+      const gender = document.getElementById('patientGender').value;
+      const lmp = document.getElementById('patientLMP').value;
+      const ward = document.getElementById('patientWard').value.trim();
+      const bed = document.getElementById('patientBed').value.trim();
+      const complaints = document.getElementById('patientComplaints').value.trim();
+      const diagnosis = document.getElementById('patientDiagnosis').value.trim();
+      const illnesses = Array.from(document.getElementById('patientPastIllnesses').selectedOptions).map(opt => opt.value);
+      const selectedDrugs = Array.from(document.getElementById('patientDrugs').selectedOptions).map(opt => parseInt(opt.value));
+      if (!admissionNo || !name || !age || !gender || !ward || !bed || !complaints || !diagnosis) {
+        document.getElementById('patientMessage').innerHTML = '<div class="message error">Please fill in all required fields.</div>';
+        return;
+      }
+      let patients = getPatients();
+      const patient = {
+        admissionNo, name, age, gender, lmp,
+        ward, bed, complaints, diagnosis,
+        illnesses, drugs: selectedDrugs
+      };
+      patients.push(patient);
+      savePatients(patients);
+      document.getElementById('patientMessage').innerHTML = '<div class="message success">Patient admitted successfully.</div>';
+      generatePrescription(patient);
+    }
+    function generatePrescription(patient) {
+      // Fill prescription fields
+      document.getElementById('presAdmissionNo').innerText = patient.admissionNo;
+      document.getElementById('presName').innerText = patient.name;
+      document.getElementById('presAge').innerText = patient.age;
+      document.getElementById('presGender').innerText = patient.gender;
+      if (patient.gender === 'Female' && patient.lmp) {
+        document.getElementById('presLMPContainer').style.display = 'block';
+        document.getElementById('presLMP').innerText = patient.lmp;
+      } else {
+        document.getElementById('presLMPContainer').style.display = 'none';
+      }
+      document.getElementById('presWard').innerText = patient.ward;
+      document.getElementById('presBed').innerText = patient.bed;
+      document.getElementById('presComplaints').innerText = patient.complaints;
+      document.getElementById('presDiagnosis').innerText = patient.diagnosis;
+      document.getElementById('presPastIllnesses').innerText = patient.illnesses.join(', ');
+      // List prescribed drugs
+      const drugs = getDrugs();
+      const ul = document.getElementById('presDrugsList');
+      ul.innerHTML = '';
+      patient.drugs.forEach(idx => {
+        const d = drugs[idx];
+        if (d) {
+          const li = document.createElement('li');
+          li.innerText = d.name + ' ' + d.form + ' ' + d.dosage;
+          ul.appendChild(li);
+        }
+      });
+      showSection('prescriptionSection');
+    }
+
+    // Manage Patients functions
+    function refreshPatientsTable() {
+      const patients = getPatients();
+      const table = document.getElementById('patientsTable');
+      table.innerHTML = '<tr><th>Admission No</th><th>Name</th><th>Age</th><th>Gender</th><th>Ward</th><th>Bed</th><th>Actions</th></tr>';
+      patients.forEach((p, index) => {
+        const row = table.insertRow();
+        row.insertCell(0).innerText = p.admissionNo;
+        row.insertCell(1).innerText = p.name;
+        row.insertCell(2).innerText = p.age;
+        row.insertCell(3).innerText = p.gender;
+        row.insertCell(4).innerText = p.ward;
+        row.insertCell(5).innerText = p.bed;
+        const actionCell = row.insertCell(6);
+        const viewBtn = document.createElement('button');
+        viewBtn.innerText = 'View Prescription';
+        viewBtn.onclick = function() {
+          generatePrescription(p);
+        };
+        actionCell.appendChild(viewBtn);
+      });
+    }
+  </script>
+</body>
+</html>
