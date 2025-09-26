@@ -71,6 +71,8 @@
     <p>Select a function from the menu above.</p>
   </div>
 
+
+
   <!-- Manage Drugs Page -->
   <div id="manageDrugsSection" class="container" style="display:none;">
     <div class="nav no-print">
@@ -82,6 +84,9 @@
       <a href="#" onclick="logout()">Logout</a>
     </div>
     <h2>Manage Drugs</h2>
+    <label>Select Drug:</label>
+<select id="drugDropdown"></select>
+<button onclick="addDrugToProtocol()">Add to Protocol</button>
     <div id="drugsMessage"></div>
     <div class="form-group">
       <label>Drug Name:</label>
@@ -247,7 +252,31 @@
     </div>
   </div>
 
+  
   <script>
+let drugsData = [];
+
+// Fetch drugs.json and populate dropdown
+function loadDrugsDropdown() {
+  fetch('drugs.json')  // fetch the JSON from the same folder
+    .then(response => response.json())
+    .then(data => {
+      drugsData = data;
+      const select = document.getElementById('drugDropdown');
+      select.innerHTML = ''; // clear existing options
+
+      data.forEach(drug => {
+        drug.brand.forEach(brandName => {
+          const optionText = `${brandName} (${drug.generic}, ${drug.strength}, ${drug.form})`;
+          const option = new Option(optionText, drug.generic);
+          select.add(option);
+        });
+      });
+    })
+    .catch(error => console.error('Error loading drugs:', error));
+}
+
+// Call this after login to populate the dropdown
     // Store data in localStorage with JSON arrays
     function getDrugs() {
       return JSON.parse(localStorage.getItem('drugs') || '[]');
