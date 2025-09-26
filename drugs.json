@@ -1,0 +1,135 @@
+[
+  {
+    "generic": "Paracetamol",
+    "brand": ["Calpol", "Panadol", "Paralen"],
+    "strength": "500 mg",
+    "form": "Tablet",
+    "category": "Analgesic"
+  },
+  {
+    "generic": "Ibuprofen",
+    "brand": ["Brufen", "Ibugesic"],
+    "strength": "400 mg",
+    "form": "Tablet",
+    "category": "Analgesic"
+  },
+  {
+    "generic": "Diclofenac",
+    "brand": ["Voltaren", "Cataflam", "Diclo"],
+    "strength": "50 mg",
+    "form": "Tablet",
+    "category": "Analgesic"
+  },
+  {
+    "generic": "Amoxicillin",
+    "brand": ["Amoxil", "Clamoxyl", "Moxilin"],
+    "strength": "500 mg",
+    "form": "Capsule",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Cefixime",
+    "brand": ["Suprax", "Cefspan"],
+    "strength": "200 mg",
+    "form": "Tablet",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Ciprofloxacin",
+    "brand": ["Ciproxin", "Ciprobay"],
+    "strength": "500 mg",
+    "form": "Tablet",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Azithromycin",
+    "brand": ["Zithromax", "Azithrocin"],
+    "strength": "500 mg",
+    "form": "Tablet",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Doxycycline",
+    "brand": ["Doxy", "Doxit"],
+    "strength": "100 mg",
+    "form": "Tablet",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Metronidazole",
+    "brand": ["Flagyl", "Metron"],
+    "strength": "400 mg",
+    "form": "Tablet",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Gentamicin",
+    "brand": ["Gentacin", "Genta"],
+    "strength": "80 mg",
+    "form": "Injection",
+    "category": "Antibiotic"
+  },
+  {
+    "generic": "Amlodipine",
+    "brand": ["Norvasc", "Amloc"],
+    "strength": "5 mg",
+    "form": "Tablet",
+    "category": "Antihypertensive"
+  },
+  {
+    "generic": "Atenolol",
+    "brand": ["Tenormin", "Atenol"],
+    "strength": "50 mg",
+    "form": "Tablet",
+    "category": "Antihypertensive"
+  },
+  {
+    "generic": "Losartan",
+    "brand": ["Cozaar", "Losar"],
+    "strength": "50 mg",
+    "form": "Tablet",
+    "category": "Antihypertensive"
+  },
+  {
+    "generic": "Enalapril",
+    "brand": ["Renitec", "Enap"],
+    "strength": "5 mg",
+    "form": "Tablet",
+    "category": "Antihypertensive"
+  },
+  {
+    "generic": "Metformin",
+    "brand": ["Glucophage", "Metfogamma"],
+    "strength": "500 mg",
+    "form": "Tablet",
+    "category": "Antidiabetic"
+  },
+  {
+    "generic": "Glibenclamide",
+    "brand": ["Daonil", "Gliben"],
+    "strength": "5 mg",
+    "form": "Tablet",
+    "category": "Antidiabetic"
+  },
+  {
+    "generic": "Insulin (Regular Human)",
+    "brand": ["Humulin R", "Actrapid"],
+    "strength": "100 IU/mL",
+    "form": "Injection",
+    "category": "Antidiabetic"
+  },
+  {
+    "generic": "Salbutamol",
+    "brand": ["Ventolin", "Asthalin"],
+    "strength": "100 mcg/puff",
+    "form": "Inhaler",
+    "category": "Bronchodilator"
+  },
+  {
+    "generic": "Montelukast",
+    "brand": ["Singulair", "Montair"],
+    "strength": "10 mg",
+    "form": "Tablet",
+    "category": "Bronchodilator"
+  }
+]
